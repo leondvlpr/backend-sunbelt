@@ -1,5 +1,6 @@
 package com.example.pruebatecnica.application.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -9,6 +10,18 @@ import com.example.pruebatecnica.domain.entity.Cliente;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
+    
+    @Value("${error.tipoDocumentoObligatorio}")
+    private String tipoDocumentoObligatorioMessage;
+    
+    @Value("${error.numeroDocumentoObligatorio}")
+    private String numeroDocumentoObligatorioMessage;
+    
+    @Value("${error.tipoDocumentoInvalido}")
+    private String tipoDocumentoInvalidoMessage;
+    
+    @Value("${request.clientNotFound}")
+    private String notFoundMessage;
 
     @Override
     public Cliente consultarCliente(ClienteDTO clienteInfo) {
@@ -16,19 +29,19 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = new Cliente();
 
         if (clienteInfo.getTipoDocumento() == null || clienteInfo.getTipoDocumento().isEmpty()) {
-            throw new IllegalArgumentException("El campo tipoDocumento es obligatorio");
+            throw new IllegalArgumentException(tipoDocumentoObligatorioMessage);
         }
 
         if (clienteInfo.getNumeroDocumento() == null || clienteInfo.getNumeroDocumento().isEmpty()) {
-            throw new IllegalArgumentException("El campo numeroDocumento es obligatorio");
+            throw new IllegalArgumentException(numeroDocumentoObligatorioMessage);
         }
 
         if (!"C".equals(clienteInfo.getTipoDocumento()) && !"P".equals(clienteInfo.getTipoDocumento())) {
-            throw new IllegalArgumentException("El tipo de documento debe ser C - Cédula de ciudadanía o P - Pasaporte");
+            throw new IllegalArgumentException(tipoDocumentoInvalidoMessage);
         }
 
         if (!"10121314".equals(clienteInfo.getNumeroDocumento())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, notFoundMessage);
         }
         cliente.setPrimerNombre(cliente.getPrimerNombre());
         cliente.setSegundoNombre(cliente.getSegundoNombre());
