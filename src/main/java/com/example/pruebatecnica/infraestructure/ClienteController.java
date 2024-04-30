@@ -10,6 +10,7 @@ import com.example.pruebatecnica.domain.entity.Cliente;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Slf4j
 @RestController
 public class ClienteController {
+
+    @Value("${request.clientFound}")
+    private String clientFound;
+
+    @Value("${request.clientNotFound}")
+    private String clientNotFound;
+    
+    @Value("${error.invalidRequest}")
+    private String invalidRequest;
+
+    @Value("${error.internalServer}")
+    private String errorInternalServer;
 
     @Autowired
     ClienteServiceImpl clienteServiceImpl = new ClienteServiceImpl();
@@ -32,24 +45,24 @@ public class ClienteController {
 
             clienteResponseDTO.setCode(200);
             clienteResponseDTO.setData(clienteEncontado);
-            clienteResponseDTO.setMsj("Cliente encontado");
+            clienteResponseDTO.setMsj(clientFound);
 
             return ResponseEntity.ok(clienteResponseDTO);
 
         } catch (IllegalArgumentException e) {
             clienteResponseDTO.setCode(400);
-            clienteResponseDTO.setMsj("Petición inválida" + ": " + e);
+            clienteResponseDTO.setMsj(invalidRequest + ": " + e);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(clienteResponseDTO);
         } catch (RuntimeException e) {
             clienteResponseDTO.setCode(404);
-            clienteResponseDTO.setMsj("Cliente no encontrado");
+            clienteResponseDTO.setMsj(clientNotFound);
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(clienteResponseDTO);
         } catch (Exception e) {
-            log.error("Error interno del servidor", e.getMessage());
+            log.error(errorInternalServer, e.getMessage());
             clienteResponseDTO.setCode(500);
-            clienteResponseDTO.setMsj("Error interno del servidor");
+            clienteResponseDTO.setMsj(errorInternalServer);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(clienteResponseDTO);
         }
