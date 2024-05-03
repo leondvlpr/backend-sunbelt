@@ -50,11 +50,13 @@ public class ClienteController {
             return ResponseEntity.ok(clienteResponseDTO);
 
         } catch (IllegalArgumentException e) {
+            log.error(invalidRequest, e.getMessage());
             clienteResponseDTO.setCode(400);
-            clienteResponseDTO.setMsj(invalidRequest + ": " + e);
+            clienteResponseDTO.setMsj(invalidRequest + ": " + e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(clienteResponseDTO);
         } catch (RuntimeException e) {
+            log.error(clientNotFound, e.getMessage());
             clienteResponseDTO.setCode(404);
             clienteResponseDTO.setMsj(clientNotFound);
 
