@@ -1,5 +1,4 @@
-FROM openjdk:11
-VOLUME /tmp
-EXPOSE 8090
-ADD ./target/pruebatecnica-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY target/pruebatecnica.jar .
+CMD ["java", "-jar", "your-application.jar"]
